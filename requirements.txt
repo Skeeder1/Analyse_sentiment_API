@@ -1,16 +1,22 @@
+# Runtime
 fastapi==0.95.2
 uvicorn[standard]==0.22.0
-joblib==1.3.2
-scikit-learn==1.3.2
+gunicorn==23.0.0
+
+# ML stack (compatibles Python 3.11)
 numpy==1.26.4
+scikit-learn==1.3.2
+joblib==1.3.2
 pandas==2.2.2
+nltk==3.8.1
 lime==0.2.0.1
-python-multipart==0.0.6
+
+# App / API / UI
 requests==2.31.0
+python-multipart==0.0.6
 streamlit==1.28.0
 plotly==5.15.0
-gunicorn==22.1.0
+
+# Tests
 pytest==7.4.0
 pytest-timeout==2.4.0
-nltk==3.8.1
-
