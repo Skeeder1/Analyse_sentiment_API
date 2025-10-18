@@ -68,7 +68,7 @@ def explain(request: TweetRequest):
         raise HTTPException(status_code=500, detail="Model not loaded")
     cleaned_text = preprocess_text(request.text, emojis=_emojis, stopwords_list=_stopwords)
     if len(cleaned_text.strip().split()) < 2:
-        raise HTTPException(status_code=422, detail="Text too short for explanation")
+        return {"sentiment": "neutral", "explanation": [], "html_explanation": "<div style=\"font-family: Arial, sans-serif; color: #ff9800;\"><p>⚠️ Le texte est trop court pour générer une explication. Veuillez entrer au moins 2 mots.</p></div>", "warning": True}
 
     try:
         # Lazy import to keep startup light
@@ -113,16 +113,22 @@ def explain(request: TweetRequest):
             contribs_sorted = sorted(contribs, key=lambda x: -abs(x[1]))[:10]
             explanation = [(w, float(score)) for w, score in contribs_sorted]
 
-            # Build a simple HTML snippet
-            html_lines = ["<div style='font-family: Arial, sans-serif;'>",
-                          f"<h3>Explanation (fallback)</h3>",
-                          "<ul>"]
+            # Build a simple HTML snippet with grey styling for improved visibility
+            html_lines = [
+                "<div style=\"font-family: Arial, sans-serif; color: #6b7280; background: transparent;\">",
+                "<h3 style=\"color: #374151; margin: 0 0 8px 0;\">Explanation (fallback)</h3>",
+                "<ul style=\"color: #6b7280; padding-left: 18px; margin: 0 0 8px 0;\">",
+            ]
+
             for w, s in explanation:
-                color = "green" if s > 0 else "red"
-                html_lines.append(f"<li><b style='color:{color}'> {w} </b> : {s:.4f}</li>")
+                # Use grey shades for token and score so everything is visible on light/dark backgrounds
+                html_lines.append(
+                    f"<li style=\"margin-bottom:6px;\"><b style=\"color:#374151;\">{w}</b> : <span style=\"color:#6b7280;\">{s:.4f}</span></li>"
+                )
+
             html_lines.append("</ul>")
             html_lines.append("</div>")
-            html_exp = '\n'.join(html_lines)
+            html_exp = "\n".join(html_lines)
 
             sentiment = "positive" if model.predict(vectorizer.transform([cleaned_text]))[0] == 1 else "negative"
             return {"sentiment": sentiment, "explanation": explanation, "html_explanation": html_exp}
