@@ -16,7 +16,7 @@ PORT=${PORT:-8000}
 # - log-level: info (informative logging)
 
 exec gunicorn "src.api_analyse.main:app" \
-  -k uvicorn.workers.UvicornWorker \
+  -k uvicorn.workers.UvgiicornWorker \
   --workers 2 \
   --threads 2 \
   --bind "0.0.0.0:${PORT}" \

@@ -7,6 +7,7 @@ from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
 from .preprocess import preprocess_text
+from .startup_nltk import ensure_nltk_data
 
 ARTIFACTS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), '..', 'api_artifacts')
 ARTIFACTS_DIR = os.path.abspath(ARTIFACTS_DIR)
@@ -38,6 +39,11 @@ except Exception as e:
     print(f"Warning: could not load model/vectorizer: {e}")
 
 app = FastAPI(title="Sentiment Analysis API")
+
+
+@app.on_event("startup")
+def _init_nltk():
+    ensure_nltk_data()
 
 
 class TweetRequest(BaseModel):
