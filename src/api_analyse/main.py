@@ -53,12 +53,18 @@ def health():
 def predict(request: TweetRequest):
     if not model or not vectorizer:
         raise HTTPException(status_code=500, detail="Model not loaded")
-    cleaned_text = preprocess_text(request.text, emojis=_emojis, stopwords_list=_stopwords)
-    X = vectorizer.transform([cleaned_text])
-    proba = model.predict_proba(X)[0]
-    sentiment = "positive" if proba[1] >= proba[0] else "negative"
-    confidence = float(max(proba))
-    return {"sentiment": sentiment, "confidence": confidence, "probability_positive": float(proba[1]), "probability_negative": float(proba[0])}
+    try:
+        cleaned_text = preprocess_text(request.text, emojis=_emojis, stopwords_list=_stopwords)
+        X = vectorizer.transform([cleaned_text])
+        proba = model.predict_proba(X)[0]
+        sentiment = "positive" if proba[1] >= proba[0] else "negative"
+        confidence = float(max(proba))
+        return {"sentiment": sentiment, "confidence": confidence, "probability_positive": float(proba[1]), "probability_negative": float(proba[0])}
+    except Exception as e:
+        import traceback
+        print(f"Error in /predict: {e}")
+        print(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=f"Prediction error: {str(e)}")
 
 
 @app.post("/explain")
