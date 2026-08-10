@@ -2,9 +2,12 @@
 """
 Manual API test script to debug endpoints locally or on Render.
 
+Not a pytest suite: it is a standalone script, kept out of the test collection
+path on purpose.
+
 Usage:
-    python test_api_manual.py                    # Test local API (default: http://127.0.0.1:8003)
-    python test_api_manual.py https://your-render-url.onrender.com    # Test cloud API
+    python scripts/manual_api_check.py                 # Test local API (default: http://127.0.0.1:8003)
+    python scripts/manual_api_check.py https://your-render-url.onrender.com    # Test cloud API
 """
 
 import requests

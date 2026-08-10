@@ -59,6 +59,8 @@ def health():
 def predict(request: TweetRequest):
     if not model or not vectorizer:
         raise HTTPException(status_code=500, detail="Model not loaded")
+    if not request.text.strip():
+        raise HTTPException(status_code=422, detail="Field 'text' must not be empty")
     try:
         cleaned_text = preprocess_text(request.text, emojis=_emojis, stopwords_list=_stopwords)
         X = vectorizer.transform([cleaned_text])
@@ -80,7 +82,7 @@ def explain(request: TweetRequest):
         raise HTTPException(status_code=500, detail="Model not loaded")
     cleaned_text = preprocess_text(request.text, emojis=_emojis, stopwords_list=_stopwords)
     if len(cleaned_text.strip().split()) < 2:
-        return {"sentiment": "neutral", "explanation": [], "html_explanation": "<div style=\"font-family: Arial, sans-serif; color: #ff9800;\"><p>⚠️ Le texte est trop court pour générer une explication. Veuillez entrer au moins 2 mots.</p></div>", "warning": True}
+        return {"sentiment": "neutral", "explanation": [], "html_explanation": "<div style=\"font-family: Arial, sans-serif; color: #ff9800;\"><p>⚠️ The text is too short to generate an explanation. Please enter at least 2 words.</p></div>", "warning": True}
 
     try:
         # Lazy import to keep startup light
@@ -164,14 +166,15 @@ def root():
             </style>
         </head>
         <body>
-            <h1>Bienvenue sur l'API Sentiment Analysis</h1>
-            <p>Cette API vous permet de :</p>
+            <h1>Welcome to the Sentiment Analysis API</h1>
+            <p>This API lets you:</p>
             <ul>
-                <li>Obtenir la prédiction de sentiment pour un texte via <code>/predict</code></li>
-                <li>Obtenir une explication LIME du modèle via <code>/explain</code></li>
-                <li>Vérifier l'état de santé de l'API via <code>/health</code></li>
+                <li>Get the sentiment prediction for a text via <code>/predict</code></li>
+                <li>Get a LIME explanation of the model via <code>/explain</code></li>
+                <li>Check the health of the API via <code>/health</code></li>
             </ul>
-            <p>La documentation interactive est disponible sur <a href="/docs">Swagger UI</a>.</p>
+            <p>The model is trained on <b>English</b> text only.</p>
+            <p>Interactive documentation is available on <a href="/docs">Swagger UI</a>.</p>
         </body>
     </html>
     """

@@ -8,10 +8,10 @@
   "language": "English",
   "description": "Logistic Regression model for sentiment analysis using TF-IDF and custom text preprocessing",
   "files": {
-    "model": "api_artifacts\\sentiment_model.joblib",
-    "vectorizer": "api_artifacts\\tfidf_vectorizer.joblib",
-    "emoji_dict": "api_artifacts\\emoji_dict.json",
-    "stopwords": "api_artifacts\\stopwords_list.json",
-    "preprocess_function": "api_artifacts\\preprocess_function.py"
+    "model": "api_artifacts/sentiment_model.joblib",
+    "vectorizer": "api_artifacts/tfidf_vectorizer.joblib",
+    "emoji_dict": "api_artifacts/emoji_dict.json",
+    "stopwords": "api_artifacts/stopwords_list.json",
+    "preprocess_function": "src/api_analyse/preprocess.py"
   }
 }
